@@ -10,6 +10,8 @@
  Set @paramDEKey = RequestParameter("pathParamDEKey")
  Set @paramDEName = RequestParameter("pathParamDEName")
  Set @paramBUName = RequestParameter("pathParamBUName")
+Set @paramSearchString = RequestParameter("searchString")
+
  Set @temp = RequestParameter("PageURL")
  Set @dePathHTML = ''
 /* OutputLine(v(@BUmid)) */
@@ -21,7 +23,7 @@
       var testVar = 'Hello';
       Platform.Load("core", "1");
       var prox = new Script.Util.WSProxy();
-      //Write(Variable.GetValue("@paramCID"));
+      Write('>>>>>>>::' + Variable.GetValue("@paramSearchString"));
       //Write(Variable.GetValue("@paramMID"));
       //Write('333333333123455>>>>>>>>>>');
       if (Variable.GetValue("@paramCID") != '' & Variable.GetValue("@paramMID") != '') {
@@ -403,7 +405,14 @@ body, .tb_properties{font-family: Arial !important; font-size: 16px !important; 
        
      </table>
     </div>
-    
+    <form method="POST">
+  <div class="form-group">
+    <input type="text" class="form-control" id="searchString" name = "searchString">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form>
+     
+
     <div class="panel panel-default" style = "display : block">
       <div class="panel-heading"><b> Data Extension List</b></div>
       <div class="panel-body">
