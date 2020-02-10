@@ -23,9 +23,9 @@
       var prox = new Script.Util.WSProxy();
       //Write(Variable.GetValue("@paramCID"));
       //Write(Variable.GetValue("@paramMID"));
-      Write('333333333123455>>>>>>>>>>');
+      //Write('333333333123455>>>>>>>>>>');
       if (Variable.GetValue("@paramCID") != '' & Variable.GetValue("@paramMID") != '') {
-        Write('2233123455>>>>>>>>>>');
+        //Write('2233123455>>>>>>>>>>');
        try {
         prox.setClientId({
          "ID": Variable.GetValue("@paramMID")
@@ -37,7 +37,7 @@
          SimpleOperator: "equals",
          Value: cidParam
         };
-        Write('123455>>>>>>>>>>');
+        //Write('123455>>>>>>>>>>');
         //Write(Stringify(filter));
         var desc = prox.retrieve("DataExtensionField", DEFieldcols, filter);
         //Write('Result :' + Stringify(desc));
