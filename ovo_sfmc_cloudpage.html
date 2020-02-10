@@ -1,0 +1,490 @@
+%%[
+ var @BUmid
+ /* Add the BU details in this JSON */
+ Set @BUJson = '[{"name" : "OVO Energy Admin", "mid" : "7203881"}]'
+ Set @DEcount = 0
+ Set @tableTRs = ''
+ Set @tableFieldTRs = ''
+ Set @paramMID = Lowercase(RequestParameter("pathParamMID"))
+ Set @paramCID = Lowercase(RequestParameter("pathParamCID"))
+ Set @paramDEKey = RequestParameter("pathParamDEKey")
+ Set @paramDEName = RequestParameter("pathParamDEName")
+ Set @paramBUName = RequestParameter("pathParamBUName")
+ Set @temp = RequestParameter("PageURL")
+ Set @dePathHTML = ''
+/* OutputLine(v(@BUmid)) */
+
+]%%
+<html>
+  <head>
+    <script runat = "server" > 
+      var testVar = 'Hello';
+      Platform.Load("core", "1");
+      var prox = new Script.Util.WSProxy();
+      //Write(Variable.GetValue("@paramCID"));
+      //Write(Variable.GetValue("@paramMID"));
+      Write('333333333123455>>>>>>>>>>');
+      if (Variable.GetValue("@paramCID") != '' & Variable.GetValue("@paramMID") != '') {
+        Write('2233123455>>>>>>>>>>');
+       try {
+        prox.setClientId({
+         "ID": Variable.GetValue("@paramMID")
+        });
+        var DEFieldcols = ["Name", "FieldType", "Ordinal", "Client.ID", "DataExtension.CustomerKey"];
+        var cidParam = Variable.GetValue("@paramDEKey");
+        var filter = {
+         Property: "DataExtension.CustomerKey",
+         SimpleOperator: "equals",
+         Value: cidParam
+        };
+        Write('123455>>>>>>>>>>');
+        //Write(Stringify(filter));
+        var desc = prox.retrieve("DataExtensionField", DEFieldcols, filter);
+        //Write('Result :' + Stringify(desc));
+        var tableFieldTRsJS = '';
+        for (i = 0; i < desc.Results.length; i++) {
+         tableFieldTRsJS += '<tr><td>' + desc.Results[i].Name + '</td><td>' + desc.Results[i].FieldType + '</td></tr>'
+        }
+        Variable.SetValue("@tableFieldTRs", tableFieldTRsJS);
+       } catch (ex) {
+        Write('Exception getting fields :' + Stringify(ex));
+       }
+
+
+       var dePathHTML = getfolderpath(Variable.GetValue("@paramCID"), Variable.GetValue("@paramMID"));
+       //Write('>>::' + dePathHTML + '::>>');
+       if (dePathHTML.length < 2) {
+        dePathHTML = 'Not Found, check with Admin'
+       }
+       Variable.SetValue('@dePathHTML', dePathHTML);
+       //Write(dePathHTML);
+      }
+      //Write('Path Is ::' + getfolderpath('Variable.GetValue("@paramCID")', 'Variable.GetValue("@paramMID")'));
+      var mid = Variable.GetValue("@BUmid");
+
+      if (true || mid != '') {
+       var tableTRsJS = '';
+       var businessUnitsJSON = Variable.GetValue('@BUJson');
+       var obj = eval(businessUnitsJSON);
+       for (j = 0; j < obj.length; j++) {
+        try {
+         prox.setClientId({
+          "ID": obj[j].mid
+         });
+         var cols = ["Name",
+          "CategoryID",
+          "CustomerKey",
+          "IsSendable",
+          "Description",
+          "IsTestable"
+         ];
+          
+           var filter = {
+              Property: "Name",
+              SimpleOperator: "like",
+              Value: "ALL_CUSTOMERS"
+          };
+         
+
+         var desc = prox.retrieve("DataExtension", cols, filter);
+         //Write('HasMoreRows::' + desc.HasMoreRows);
+         Variable.SetValue('@DEcount', desc.Results.length)
+         var action = Variable.GetValue('@temp');
+         for (i = 0; i < desc.Results.length; i++) {
+          tableTRsJS += '<tr><td>' + desc.Results[i].Name + '</td><td>' + obj[j].name + ' (' + obj[j].mid + ')' +
+           '</td><td>' + desc.Results[i].IsTestable + '</td><td>' + desc.Results[i].IsSendable + '</td><td>' + desc.Results[i].CustomerKey + '</td><td>' + '<form id="submitForm" action="' + action + '" method="Post" style="text-align: center;"><input type="hidden" name="pathParamBUName" value="' + obj[j].name + ' (' + obj[j].mid + ')' + '" /><input type="hidden" name="pathParamDEName" value="' + desc.Results[i].Name + '" /><input type="hidden" name="pathParamMID" value="' + obj[j].mid + '" /><input type="hidden" name="pathParamDEKey" value="' + desc.Results[i].CustomerKey + '" /><input type="hidden" name="pathParamCID" value="' + desc.Results[i].CategoryID + '" /><button onclick="openLoader();" type="submit" class="btn btn-primary">Get Details</button></form>' + '</td></tr>'
+         }
+         Variable.SetValue("@tableTRs", tableTRsJS);
+         //Write(Stringify(desc));
+         prox.resetClientIds();
+        } catch (e) {
+         Write(Stringify(e));
+        }
+       }
+
+      } else {
+       write('Hello');
+      }
+
+      function getFolderInfoByID(catid, mid) {
+       try {
+        prox.setClientId({
+         "ID": mid
+        });
+        var catinfo = {
+         Name: "",
+         ID: "",
+         ParentFolderID: "",
+         ParentFolderName: ""
+        };
+        var FolderCols = ["Name", "ID", "ContentType", "Description", "Client.ID", "ParentFolder.ID", "CustomerKey", "ParentFolder.CustomerKey", "ParentFolder.ContentType", "IsActive", "IsEditable", "AllowChildren", "ParentFolder.Name"];
+        var FolderFilter = {
+         Property: "ID",
+         SimpleOperator: "equals",
+         Value: catid
+        };
+        var retrieveDEField = prox.retrieve("DataFolder", FolderCols, FolderFilter); /*** Retrive all detail for the folder/categoryid in which the dataextension lives********/
+        //Write('>>::' + Stringify(retrieveDEField)+ "<br/>");
+        if (retrieveDEField.Results.length > 0) {
+         catinfo.Name = retrieveDEField.Results[0].Name;
+         catinfo.ID = retrieveDEField.Results[0].ID;
+         catinfo.ParentFolderID = retrieveDEField.Results[0].ParentFolder.ID;
+         catinfo.ParentFolderName = retrieveDEField.Results[0].ParentFolder.Name;
+        }
+        return catinfo;
+       } catch (e) {
+        Write(Stringify(e) + " catagoryid " + catid);
+       }
+      }
+
+      function getfolderpath(catid, mid) {
+       try {
+        prox.setClientId({
+         "ID": mid
+        });
+        //   Write("getfolderpath catid" + catid);
+        var path = "";
+        var path1 = "";
+        var path2 = "";
+        if (catid > 0 & catid != "") {
+         var folder = getFolderInfoByID(catid, mid);
+         if (folder.ParentFolderName != "" && folder.ParentFolderName != "null" && folder.ParentFolderID != 0) {
+          //   Write("insidegetfolder1<br/>");
+          path1 = folder.ParentFolderName + " > " + folder.Name;
+         } else if (folder.Name != "") {
+          path1 = folder.Name;
+          //   Write(path1+" insidegetfolder2<br/>");
+         }
+         /*****check if the dataextension has a one level up parent folder that should be added to the path******/
+         if (folder.ParentFolderID != 0 && folder.ParentFolderID != "") {
+          var folder1 = getFolderInfoByID(folder.ParentFolderID, mid);
+          if (folder1.ParentFolderID != 0) {
+           /*****check if the dataextension has a one level up parent folder that should be added to the path******/
+           path2 = folder1.ParentFolderName + " > ";
+          }
+         }
+         path = path2 + " " + path1;
+         return path;
+        }
+       } catch (e) {
+        Write(Stringify(e));
+       }
+      }
+
+    </script>
+  <title>DE Library</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    <script type = "text/javascript">
+      
+      var table;
+       $(document).ready(function() {
+         console.log('test12');
+         //alert('%%=v(@paramMID)=%%' + '::' + '%%=v(@paramCID)=%%');
+         if($('#deTable > tbody > tr').length > 1) {
+           console.log('test2');
+           var table = $('#deTable').DataTable({
+             "columnDefs": [
+            
+            {
+                "targets": [ 4 ],
+                "visible": false
+            }
+        ],
+              //"scrollY":        "50vh",
+              //"scrollCollapse": true,
+              //"paging":         false,
+                //dom: 'Bfrtip',
+                "buttons": [
+                    'copy', 'excel', 'pdf', 'print'
+                ]
+           });
+           table.columns.adjust().draw();
+         }
+         console.log('test4');
+           if('%%=v(@paramMID)=%%' != '' && $("#deFieldTable > tbody > tr").length > 1) {
+              $('#modalHiddenBtn').trigger('click');
+             console.log('test3');
+             setTimeout(function() {
+              table = $('#deFieldTable').DataTable({
+              //"scrollY":        "50vh",
+              //"scrollCollapse": true,
+                "ordering": true,
+                "paging":         false,
+                //dom: 'Bfrtip',
+                "pageLength": 5,
+                "scrollY": "20vh",
+                "buttons": [
+                    'copy', 'excel', 'pdf', 'print'
+                ]
+           });
+            }, 500);
+         
+             
+           table.columns.adjust().draw();
+           //$('.sorting_asc').trigger('click');
+           }
+           
+           $('#load').hide();
+         
+        if('%%=v(@BUmid)=%%' != '') {
+          $('.midSelect  option[value=%%=v(@BUmid)=%%]').attr("selected", "selected");
+          $('.buName').html($('.midSelect  option[value=%%=v(@BUmid)=%%]').text()); 
+        }       
+         $('.submitMID').click(function() {
+           var mid = $('.midSelect').val();
+           var newURL = window.location.href.split('?')[0] + '?mid=' + mid;
+           window.location.href = newURL;
+         });
+       });
+      
+      function openLoader() {
+       $('#load').show();
+      }
+    </script>
+    
+    <style>
+      .pageHeader{
+        line-height: 20vh;
+        padding: 15px;
+        //border: 1px solid #666;
+        background-color: lightblue;
+        margin-bottom: 20px;
+       }
+      
+      .buDetails {
+        background-color : yellow;
+        font-size : large;
+        font-weight : bold;
+      } 
+      
+      .se-pre-con {
+          position: fixed;
+          left: 0px;
+          top: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 9999;
+          background: url(https://thumbs.gfycat.com/FearfulSpryBeagle-size_restricted.gif) center no-repeat #fff;
+      }
+      
+      .dePathDiv {
+          //background-color : yellow;
+          //font-size : large;
+          //font-weight : bold;
+      }
+      
+      .subHeadings {
+        line-height: 10vh;
+        padding: 15px;
+        border: 1px solid #666;
+        background-color: lightblue;
+        //margin: 20px;
+        font-weight:bold;
+        font-family: verdana;
+      }
+      
+      .modal-header {
+        background-color : lightblue;
+      }
+      
+      table {
+       font-size : smaller !important;
+      }
+      
+    @media only screen and (max-width:480px){
+/* MOBILE GLOBAL STYLES - DO NOT CHANGE */
+body, .tb_properties{font-family: Arial !important; font-size: 16px !important; color: #808080 !important; line-height: 1 !important; padding: 0px !important; }.buttonstyles{font-family: Arial !important; font-size: 16px !important; color: #FFFFFF !important; padding: 0px !important; }h1{font-family: Arial !important; font-size: 22px !important; color: #202020 !important; line-height: 1 !important; }h2{font-family: Arial !important; font-size: 20px !important; color: #202020 !important; line-height: 1 !important; }h3{font-family: Arial !important; font-size: 18px !important; color: #202020 !important; line-height: 1 !important; }a:not(.buttonstyles){line-height: 1 !important; }.mobile-hidden{display: none !important; }.responsive-td {width: 100% !important; display: block !important; padding: 0 !important;}
+/* END OF MOBILE GLOBAL STYLES - DO NOT CHANGE */
+}</style>
+    
+</head>
+  <body>
+    <div id="load" style = "display:block">
+          <div class='se-pre-con'></div>
+        </div>
+    <div class="pageHeader">
+      <h2 style = "text-align:center">
+        <p>
+        Data Extensions Library (<b>Stage-POC</b>)
+          </p>
+      </h2>
+    </div>
+  
+  <div class="container">
+    <!-- For BU specific functionality -->
+    <form class="form-horizontal" style = "display : none">
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="email">Select Business Unit :</label>
+    <div class="col-sm-3">
+      <select class="form-control midSelect" id="sel1">
+        <option value="100019531">Philip Morris International</option>
+        <option  value="100023840">Regional_EU</option>
+        <option  value="100023552">Regional_LAC</option>  
+      </select>
+    </div>
+    <button type="button" class="btn btn-primary submitMID">Go</button>
+  </div>
+</form>  
+    <!-- For BU specific functionality -->
+    <span style = "display : none">
+    <hr/>
+  <p>Business Unit : <span class="buDetails"><span  class="buName"></span>&nbsp;&nbsp;(%%=v(@BUmid)=%%)</span>
+    <p>
+      Total Data Extensions : <span class="buDetails">%%=v(@DEcount)=%%</span></p>   
+    
+    <hr/>
+      </span>
+       
+    <div class="panel panel-default" style = "display : %%=IIF(Length(@dePathHTML)>1,'none','none')=%%">
+      <div class="panel-heading"><b>Data Extension Details</b></div>
+      <div class="panel-body">
+       <table style = "width : 100%" class="table table-striped table-bordered">       
+       <th>Data Extension</th>
+       <th>Business Unit</th>
+       <th>Folder Path</th>
+       <tr>         
+         <td>%%=v(@paramDEName)=%%</td>
+         <td>%%=v(@paramBUName)=%%</td>
+         <td style = "background-color : yellow">%%=v(@dePathHTML)=%%</td>
+       </tr>
+     </table>
+     <hr/>
+     <table id="deFieldTable1" class="table table-striped table-bordered" style="width:100%">
+       <thead>
+         <tr>
+       <th>Field Name</th>
+       <th>Field Type</th>
+       </tr>  
+       </thead>
+       
+       <tbody>
+      %%=IIF(Length(@tableFieldTRs)>1,@tableFieldTRs,"<tr><td colspan='2'>No fields found !</td></tr>")=%%
+    </tbody>
+       
+     </table>
+      
+      </div>
+    </div>
+    
+    
+   <div class="dePathDiv" style = "display : none">
+     <span class="subHeadings">
+       DE Details
+     </span>
+     <table style = "width : 100%" class="table table-striped table-bordered">       
+       <th>Data Extension</th>
+       <th>Business Unit</th>
+       <th>Folder Path</th>
+       <tr>         
+         <td>%%=v(@paramDEName)=%%</td>
+         <td>%%=v(@paramBUName)=%%</td>
+         <td style = "background-color : yellow">%%=v(@dePathHTML)=%%</td>
+       </tr>
+     </table>
+     
+     <table id="deFieldTable123" class="table table-striped table-bordered" style="width:100%">
+       <thead>
+         <tr>
+       <th>Field Name</th>
+       <th>Field Type</th>
+       </tr>  
+       </thead>
+       
+       <tbody>
+      %%=IIF(Length(@tableFieldTRs)>1,@tableFieldTRs,"<tr><td colspan='2'>No fields found !</td></tr>")=%%
+    </tbody>
+       
+     </table>
+    </div>
+    
+    <div class="panel panel-default" style = "display : block">
+      <div class="panel-heading"><b> Data Extension List</b></div>
+      <div class="panel-body">
+       <table id="deTable" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Business Unit</th>
+        <th>Testable</th>
+        <th>Sendable</th>
+        <!-- <th>Folder Id</th> -->
+        <th>Customer Key</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      %%=IIF(Length(@tableTRs)>1,@tableTRs,"<tr><td colspan='7'>No Data extensions found ! Please check the BU MID in request parameter</td></tr>")=%%
+    </tbody>
+  </table>
+      
+      </div>
+    </div>
+</div>
+    
+    
+    
+    <!-- Modal -->
+
+  <!-- Trigger the modal with a button -->
+  <button style="display:none" id="modalHiddenBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Data Extension Details</h4>
+        </div>
+        <div class="modal-body">
+          <table style = "width : 100%" class="table table-striped table-bordered">       
+       <th>Data Extension</th>
+       <th>Business Unit</th>
+       <th>Folder Path</th>
+       <tr>         
+         <td>%%=v(@paramDEName)=%%</td>
+         <td>%%=v(@paramBUName)=%%</td>
+         <td style = "background-color : yellow">%%=v(@dePathHTML)=%%</td>
+       </tr>
+     </table>
+     <hr/>
+     <table id="deFieldTable" class="table table-striped table-bordered" style="width:100%">
+       <thead>
+         <tr>
+       <th>Field Name</th>
+       <th>Field Type</th>
+       </tr>  
+       </thead>
+       
+       <tbody>
+      %%=IIF(Length(@tableFieldTRs)>1,@tableFieldTRs,"<tr><td colspan='2'>No fields found !</td></tr>")=%%
+    </tbody>
+       
+     </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+    
+    <!-- Modal Ends -->
+    
+    
+    
+</body>
+  <!-- Specifically loaded at the end due to some issue with Datatable -->
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+</html>
