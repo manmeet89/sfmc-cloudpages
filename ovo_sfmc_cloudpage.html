@@ -23,7 +23,7 @@ Set @paramSearchString = RequestParameter("searchString")
       var testVar = 'Hello';
       Platform.Load("core", "1");
       var prox = new Script.Util.WSProxy();
-      Write('>>>>>>>::' + Variable.GetValue("@paramSearchString"));
+      //Write('>>>>>>>::' + Variable.GetValue("@paramSearchString"));
       //Write(Variable.GetValue("@paramMID"));
       //Write('333333333123455>>>>>>>>>>');
       if (Variable.GetValue("@paramCID") != '' & Variable.GetValue("@paramMID") != '') {
@@ -80,11 +80,14 @@ Set @paramSearchString = RequestParameter("searchString")
           "Description",
           "IsTestable"
          ];
-          
+          var serachStr = Variable.GetValue("@paramSearchString");
+         if('' == serachStr) {
+          serachStr = 'ovo'
+         }
            var filter = {
               Property: "Name",
               SimpleOperator: "like",
-              Value: "ALL_CUSTOMERS"
+              Value: serachStr
           };
          
 
