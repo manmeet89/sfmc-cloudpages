@@ -14,7 +14,7 @@
     }
   },
   "host" : "https://myserver.com",
-  "basePath" : "/api/TravelMoney/1.0.0",
+  "basePath" : "/api/TravelMoney/v1",
   "tags" : [ {
     "name" : "pet",
     "description" : "Everything about your Pets",
