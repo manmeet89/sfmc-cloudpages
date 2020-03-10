@@ -65,7 +65,7 @@
     "/countries": {
       "get": {
         "tags": [
-          "Country"
+          "Countries"
         ],
         "summary": "searches countries",
         "operationId": "getCountries",
