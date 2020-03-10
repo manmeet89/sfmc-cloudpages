@@ -40,7 +40,7 @@
           },
           {
             "in": "header",
-            "name": "Authorisation",
+            "name": "Authorization",
             "description": "The JWT token for API security",
             "required": true,
             "type": "string"
@@ -76,7 +76,7 @@
         "parameters": [
           {
             "in": "header",
-            "name": "Authorisation",
+            "name": "Authorization",
             "description": "The JWT token for API security",
             "required": true,
             "type": "string"
