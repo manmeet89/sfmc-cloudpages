@@ -84,16 +84,16 @@
         ],
         "responses": {
           "200": {
-            "description": "search results matching criteria",
+            "description": "List of all countries",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ListOfCountries"
-              }
+              "$ref": "#/definitions/ListOfCountries"
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "401": {
+            "description": "Un-authorised",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
