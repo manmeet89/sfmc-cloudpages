@@ -37,20 +37,27 @@
             "description": "The base currency code from which we need exchange rates in all other currenies",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorisation",
+            "description": "The JWT token for API security",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "Exchange Rates",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ExchangeRatesResponse"
-              }
+              "$ref": "#/definitions/ExchangeRatesResponse"
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "401": {
+            "description": "Un-authorised",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -68,13 +75,11 @@
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "country",
-            "description": "the country for which the currencies are required. If not passed currencies for all countries will be returned.",
-            "required": false,
-            "type": "string",
-            "minimum": 3,
-            "maximum": 50
+            "in": "header",
+            "name": "Authorisation",
+            "description": "The JWT token for API security",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -146,6 +151,31 @@
           "items": {
             "$ref": "#/definitions/ExchangeRate"
           }
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "example": false
+        },
+        "error": {
+          "$ref": "#/definitions/Error"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "errorCode": {
+          "type": "string",
+          "example": "ERR001"
+        },
+        "delevoperMessage": {
+          "type": "string",
+          "example": "BAPI API is returning 401"
         }
       }
     },
