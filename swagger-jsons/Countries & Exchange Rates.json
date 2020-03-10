@@ -14,15 +14,15 @@
       "description": "List of countries APIs"
     },
     {
-      "name": "Exchange Rates",
+      "name": "Exchange Rate",
       "description": "List of Exchange rates API"
     }
   ],
   "paths": {
-    "/exchangeRates": {
+    "/exchangerate": {
       "get": {
         "tags": [
-          "Exchange Rates"
+          "Exchange Rate"
         ],
         "summary": "searches inventory",
         "operationId": "searchInventory",
@@ -39,6 +39,13 @@
             "type": "string"
           },
           {
+            "in": "query",
+            "name": "toCurrencyCode",
+            "description": "The currency for which we need exchange rate",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "header",
             "name": "Authorization",
             "description": "The JWT token for API security",
@@ -50,7 +57,7 @@
           "200": {
             "description": "Exchange Rates",
             "schema": {
-              "$ref": "#/definitions/ExchangeRatesResponse"
+              "$ref": "#/definitions/ExchangeRateResponse"
             }
           },
           "401": {
@@ -117,15 +124,18 @@
           "type": "string",
           "example": "Australia"
         },
-        "currency": {
-          "$ref": "#/definitions/Currency"
+        "currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Currency"
+          }
         }
       }
     },
     "Currency": {
       "type": "object",
       "properties": {
-        "code": {
+        "isoCode": {
           "type": "string",
           "example": "AUD"
         },
@@ -135,22 +145,24 @@
         }
       }
     },
-    "ExchangeRatesResponse": {
+    "ExchangeRateResponse": {
       "type": "object",
       "properties": {
-        "baseCurrency": {
+        "baseCurrencyCode": {
           "type": "string",
           "example": "GBP"
+        },
+        "toCurrencyCode": {
+          "type": "string",
+          "example": "AUD"
+        },
+        "rate": {
+          "type": "number",
+          "example": 1.223
         },
         "effectiveDate": {
           "type": "string",
           "example": "2020-12-31"
-        },
-        "rates": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ExchangeRate"
-          }
         }
       }
     },
@@ -176,19 +188,6 @@
         "delevoperMessage": {
           "type": "string",
           "example": "BAPI API is returning 401"
-        }
-      }
-    },
-    "ExchangeRate": {
-      "type": "object",
-      "properties": {
-        "currencyCode": {
-          "type": "string",
-          "example": "EUR"
-        },
-        "exchangeRate": {
-          "type": "number",
-          "example": 1.223
         }
       }
     }
