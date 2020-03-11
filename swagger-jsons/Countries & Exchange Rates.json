@@ -8,14 +8,19 @@
       "email": "manmeet.singh@publicissapient.com"
     }
   },
+  "host": "lloydsserver.com",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https"
+  ],
   "tags": [
     {
       "name": "Countries",
-      "description": "List of countries APIs"
+      "description": "Set of APIs related to countries and its currencies"
     },
     {
       "name": "Exchange Rate",
-      "description": "List of Exchange rates API"
+      "description": "Set of APIs related to currency exchange rates"
     }
   ],
   "paths": {
@@ -191,6 +196,7 @@
       "properties": {
         "success": {
           "type": "boolean",
+          "description": "This is the boolean flag that should be checked before reading the response.",
           "example": false
         },
         "error": {
@@ -229,18 +235,15 @@
       "properties": {
         "errorCode": {
           "type": "string",
+          "description": "This is the Error code that will be mapped to a error scenario.",
           "example": "ERR001"
         },
         "delevoperMessage": {
           "type": "string",
+          "description": "This will be a message which is specific to a developer and can tell the reason of failure.",
           "example": "BAPI API is returning 401"
         }
       }
     }
-  },
-  "host": "lloydsserver.com",
-  "basePath": "/api/v1",
-  "schemes": [
-    "https"
-  ]
+  }
 }
