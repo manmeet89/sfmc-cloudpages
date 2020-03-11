@@ -29,7 +29,7 @@
         "tags": [
           "Countries"
         ],
-        "summary": "searches countries",
+        "summary": "Get the list of all Countries with the currencies supported",
         "operationId": "getCountries",
         "description": "Get the list of all counrties with currency codes\n",
         "produces": [
@@ -65,9 +65,9 @@
         "tags": [
           "Exchange Rate"
         ],
-        "summary": "searches inventory",
+        "summary": "Get the exchange rate for a currency wrt a base currency",
         "operationId": "searchInventory",
-        "description": "By passing in the appropriate options, you can search for\navailable inventory in the system\n",
+        "description": "Get the exchange rate for a currency wrt a base currency",
         "produces": [
           "application/json"
         ],
