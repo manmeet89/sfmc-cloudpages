@@ -43,7 +43,7 @@
           "200": {
             "description": "List of all countries",
             "schema": {
-              "$ref": "#/definitions/APIResponse"
+              "$ref": "#/definitions/CountriesAPIResponse"
             }
           },
           "401": {
@@ -107,12 +107,6 @@
     }
   },
   "definitions": {
-    "ListOfCountries": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Country"
-      }
-    },
     "Country": {
       "type": "object",
       "properties": {
@@ -131,20 +125,32 @@
           }
         }
       },
-      "example": {
-        "countryCode": "AUS",
-        "countryName": "Australia",
-        "currencies": [
-          {
-            "isoCode": "AUD",
-            "displayName": "Australian Dollars"
-          },
-          {
-            "isoCode": "USD",
-            "displayName": "US Dollars"
-          }
-        ]
-      }
+      "example": [
+        {
+          "countryCode": "USA",
+          "countryName": "United States Of America",
+          "currencies": [
+            {
+              "isoCode": "USD",
+              "displayName": "US Dollars"
+            }
+          ]
+        },
+        {
+          "countryCode": "AUS",
+          "countryName": "Australia",
+          "currencies": [
+            {
+              "isoCode": "AUD",
+              "displayName": "Australian Dollars"
+            },
+            {
+              "isoCode": "USD",
+              "displayName": "US Dollars"
+            }
+          ]
+        }
+      ]
     },
     "Currency": {
       "type": "object",
@@ -197,23 +203,24 @@
         }
       }
     },
-    "APIResponse": {
+    "CountriesAPIResponse": {
       "type": "object",
       "properties": {
         "success": {
           "type": "boolean",
           "example": true
         },
-        "result": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Country"
-          }
-        },
         "trackingId": {
           "type": "string",
           "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
           "example": "MDC-1583849158557"
+        },
+        "result": {
+          "type": "array",
+          "description": "The list of countries object",
+          "items": {
+            "$ref": "#/definitions/Country"
+          }
         }
       }
     },
