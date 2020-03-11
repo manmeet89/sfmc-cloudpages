@@ -130,6 +130,20 @@
             "$ref": "#/definitions/Currency"
           }
         }
+      },
+      "example": {
+        "countryCode": "AUS",
+        "countryName": "Australia",
+        "currencies": [
+          {
+            "isoCode": "AUD",
+            "displayName": "Australian Dollars"
+          },
+          {
+            "isoCode": "USD",
+            "displayName": "US Dollars"
+          }
+        ]
       }
     },
     "Currency": {
