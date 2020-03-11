@@ -19,6 +19,42 @@
     }
   ],
   "paths": {
+    "/countries": {
+      "get": {
+        "tags": [
+          "Countries"
+        ],
+        "summary": "searches countries",
+        "operationId": "getCountries",
+        "description": "Get the list of all counrties with currency codes\n",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "The JWT token for API security",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all countries",
+            "schema": {
+              "$ref": "#/definitions/APIResponse"
+            }
+          },
+          "401": {
+            "description": "Un-authorised",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/exchangerate": {
       "get": {
         "tags": [
@@ -58,42 +94,6 @@
             "description": "Exchange Rates",
             "schema": {
               "$ref": "#/definitions/ExchangeRateResponse"
-            }
-          },
-          "401": {
-            "description": "Un-authorised",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/countries": {
-      "get": {
-        "tags": [
-          "Countries"
-        ],
-        "summary": "searches countries",
-        "operationId": "getCountries",
-        "description": "Get the list of all counrties with currency codes\n",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "The JWT token for API security",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of all countries",
-            "schema": {
-              "$ref": "#/definitions/ListOfCountries"
             }
           },
           "401": {
@@ -175,6 +175,31 @@
         },
         "error": {
           "$ref": "#/definitions/Error"
+        },
+        "trackingId": {
+          "type": "string",
+          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
+          "example": "MDC-1583849158557"
+        }
+      }
+    },
+    "APIResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "example": true
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Country"
+          }
+        },
+        "trackingId": {
+          "type": "string",
+          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
+          "example": "MDC-1583849158557"
         }
       }
     },
