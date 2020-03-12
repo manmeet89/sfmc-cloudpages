@@ -112,6 +112,83 @@
     }
   },
   "definitions": {
+    "CountriesAPIResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "example": true
+        },
+        "trackingId": {
+          "type": "string",
+          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
+          "example": "MDC-1583849158557"
+        },
+        "result": {
+          "type": "array",
+          "description": "The list of countries object",
+          "items": {
+            "$ref": "#/definitions/Country"
+          }
+        }
+      }
+    },
+    "ExchangeRateResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "example": true
+        },
+        "trackingId": {
+          "type": "string",
+          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
+          "example": "MDC-1583849158557"
+        },
+        "result": {
+          "$ref": "#/definitions/ExchangeRate"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "This is the boolean flag that should be checked before reading the response.",
+          "example": false
+        },
+        "error": {
+          "$ref": "#/definitions/Error"
+        },
+        "trackingId": {
+          "type": "string",
+          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
+          "example": "MDC-1583849158557"
+        }
+      }
+    },
+    "ExchangeRate": {
+      "type": "object",
+      "properties": {
+        "baseCurrencyCode": {
+          "type": "string",
+          "example": "GBP"
+        },
+        "toCurrencyCode": {
+          "type": "string",
+          "example": "AUD"
+        },
+        "rate": {
+          "type": "number",
+          "example": 1.223
+        },
+        "effectiveDate": {
+          "type": "string",
+          "example": "2020-12-31"
+        }
+      }
+    },
     "Country": {
       "type": "object",
       "properties": {
@@ -167,66 +244,6 @@
         "displayName": {
           "type": "string",
           "example": "Australian Dollars"
-        }
-      }
-    },
-    "ExchangeRateResponse": {
-      "type": "object",
-      "properties": {
-        "baseCurrencyCode": {
-          "type": "string",
-          "example": "GBP"
-        },
-        "toCurrencyCode": {
-          "type": "string",
-          "example": "AUD"
-        },
-        "rate": {
-          "type": "number",
-          "example": 1.223
-        },
-        "effectiveDate": {
-          "type": "string",
-          "example": "2020-12-31"
-        }
-      }
-    },
-    "ErrorResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean",
-          "description": "This is the boolean flag that should be checked before reading the response.",
-          "example": false
-        },
-        "error": {
-          "$ref": "#/definitions/Error"
-        },
-        "trackingId": {
-          "type": "string",
-          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
-          "example": "MDC-1583849158557"
-        }
-      }
-    },
-    "CountriesAPIResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean",
-          "example": true
-        },
-        "trackingId": {
-          "type": "string",
-          "description": "This will be a uniqie Id specific to this request whcih can be used to trace the call in the micro-service",
-          "example": "MDC-1583849158557"
-        },
-        "result": {
-          "type": "array",
-          "description": "The list of countries object",
-          "items": {
-            "$ref": "#/definitions/Country"
-          }
         }
       }
     },
