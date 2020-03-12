@@ -175,8 +175,7 @@
           "currencies": [
             {
               "currencyCode": "USD",
-              "currencyName": "US Dollars",
-              "importRestriction": "Import is restricted to USD 1000 per traveller"
+              "currencyName": "US Dollars"
             }
           ]
         },
@@ -186,13 +185,11 @@
           "currencies": [
             {
               "currencyCode": "AUD",
-              "currencyName": "Australian Dollars",
-              "importRestriction": "Import is restricted to AUD 1000 per traveller"
+              "currencyName": "Australian Dollars"
             },
             {
               "currencyCode": "USD",
-              "currencyName": "US Dollars",
-              "importRestriction": "Import is restricted to USD 1000 per traveller"
+              "currencyName": "US Dollars"
             }
           ]
         }
@@ -208,10 +205,6 @@
         "currencyName": {
           "type": "string",
           "example": "Australian Dollars"
-        },
-        "importRestriction": {
-          "type": "string",
-          "example": "Import is restricted to USD 1000 per traveller"
         }
       }
     },
