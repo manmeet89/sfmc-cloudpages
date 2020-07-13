@@ -1,2 +1,2 @@
-Countries & Exchange Rates.json
-IBAN API.json
+Countries & Exchange Rates
+IBAN API
